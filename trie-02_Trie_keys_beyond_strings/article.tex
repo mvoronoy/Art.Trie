@@ -1,0 +1,30 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{array}
+\usepackage{calc}
+\usepackage{booktabs}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{soul}
+\usepackage{hyperref}
+\usepackage{amssymb}
+\usepackage{unicode-math}
+\unimathsetup{math-style=TeX}
+
+\geometry{a4paper}
+\title{Using Trie for data representation}
+\author{Maksym Voroniy}
+
+\subsection{What Can Be a Trie Key?}\label{what-can-be-a-trie-key}
+
+The final question addressed within the scope of this article concerns
+the nature of Trie keys. While the answer "strings" is the most obvious
+one, real-world systems - such as key-value databases - often rely on
+integers, floating-point numbers, or other structured data types.
+
+A separate chapter will therefore discuss how numeric values can be
+transformed and represented as keys in Trie-based structures, enabling
+their use for efficient indexing beyond textual data.
+
