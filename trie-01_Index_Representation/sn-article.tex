@@ -86,7 +86,7 @@
 
 \begin{document}
 
-\title[Using Trie Data Structure for Highly Efficient Database Index Representation]{Using Trie Data Structure for Highly Efficient Database Index Representation}
+\title[Using Trie Data Structure for Efficient Database Index Representation]{Using Trie Data Structure for Efficient Database Index Representation}
 
 %%=============================================================%%
 %% GivenName	-> \fnm{Joergen W.}
@@ -588,7 +588,8 @@ Otherwise, a full lookup table indexed by \(\Sigma\) remains the optimal solutio
 A widely adopted memory-saving technique is to combine full lookup
 tables for densely populated nodes with compact control structures for
 sparse nodes. This idea is formalized in the family of data structures
-commonly referred to as adaptive Tries or Adaptive Radix Trees (ART) \cite{leis2013adaptive}.
+commonly referred to as adaptive Tries or Adaptive Radix Trees
+(ART) \cite{leis2013adaptive}.
 
 The core principle is simple: node representations adapt to their
 fan-out (population size). When the number of outgoing edges is small,
@@ -634,7 +635,7 @@ integer registers. For an alphabet
 
 To store associated child references or service metadata, the bitmap is
 paired with a compact ordered array (Figure ~\ref{fig:bitmapAndArray}). This array stores only
-the existing children, eliminating all (nil) entries present in full
+the existing children, eliminating all (\texttt{nil}) entries present in full
 lookup tables.
 
   Key properties of this design:
@@ -648,7 +649,10 @@ lookup tables.
   traversal.
 \item
   The index into the array is computed using a population count
-  (popcount) over the bitmap.
+  (popcount\footnote{
+The vast majority of modern CPUs support the POPCNT instruction
+ for calculating the rank of a set bit
+}) over the bitmap.
 \end{itemize}
 
 As a result, this structure removes wasted space while preserving fast
@@ -657,7 +661,7 @@ access and ordered navigation.
 \begin{figure}[h]
     \centering
     \includegraphics{./images/media/05.Bitmap-and-Array}
-    \caption{Compressed array}\label{fig:bitmapAndArray}
+    \caption{Using array of bitmap for lookup}\label{fig:bitmapAndArray}
 \end{figure}
 
 
