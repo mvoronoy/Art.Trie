@@ -202,7 +202,7 @@ node. Conversely, every leaf node is necessarily terminal.
 \subsection{Structural Redundancy and Space
 Usage}\label{structural-redundancy-and-space-usage}
 
-Another aspect that becomes immediately apparent in Figure 1 is the
+Another aspect that becomes immediately apparent in Figure~\ref{fig:3word} is the
 potential inefficiency in space usage. For example, the word "computer"
 introduces a long substring "ompute" that is unique and therefore stored
 as a linear chain of nodes. This can result in a significant number of
@@ -632,7 +632,7 @@ lookup tables.
   Key properties of this design:
 \begin{itemize}
 \item
-  The bitmap provides O(1) existence checks.
+  The bitmap provides $O(1)$ existence checks.
 \item
   The array stores only populated entries.
 \item
