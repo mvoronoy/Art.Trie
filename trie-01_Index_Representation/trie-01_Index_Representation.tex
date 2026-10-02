@@ -1,112 +1,86 @@
-%Version 3.1 December 2024
-% See section 11 of the User Manual for version history
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%                                                                 %%
-%% Please do not use \input{...} to include other tex files.       %%
-%% Submit your LaTeX manuscript as one .tex document.              %%
-%%                                                                 %%
-%% All additional figures and files should be attached             %%
-%% separately and not embedded in the \TeX\ document itself.       %%
-%%                                                                 %%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% -----------------------------------------------------------------------------
+% LICENSE: This work is licensed under a Creative Commons Attribution 4.0
+% International License (CC BY 4.0). You are free to share and adapt this
+% material for any purpose, even commercially, under the condition that you
+% give appropriate credit.
+% https://creativecommons.org
+% -----------------------------------------------------------------------------
 
-% \documentclass[referee,sn-basic,Numbered]{sn-jnl}% referee option is meant for double line spacing
+\documentclass[10pt, a4paper, oneside]{article}
 
+\usepackage[hidelinks]{hyperref}
+\usepackage{jucs2e}
+\usepackage{graphicx}
+\usepackage{url}
+\usepackage{ulem}
+\usepackage{mathtools}
+\usepackage{scalerel}
+\usepackage{setspace}
+\usepackage[strict]{changepage}
+\usepackage{caption}
+\usepackage[letterspace=-50]{microtype}
+\usepackage{fontspec}
+\usepackage{afterpage}
+\usepackage{ragged2e}
 
-%%=========================================================================================%%
-%% the documentclass is set to pdflatex as default. You can delete it if not appropriate.  %%
-%%=========================================================================================%%
+\setmainfont{Times New Roman}
 
-%%\documentclass[sn-basic]{sn-jnl}% Basic Springer Nature Reference Style/Chemistry Reference Style
+\usepackage{titlesec}
 
-%%Note: the following reference styles support Namedate and Numbered referencing. By default the style follows the most common style. To switch between the options you can add or remove �Numbered� in the optional parenthesis. 
-%%The option is available for: sn-basic.bst, sn-chicago.bst%  
- 
-%%\documentclass[pdflatex,sn-nature]{sn-jnl}% Style for submissions to Nature Portfolio journals
-%%\documentclass[pdflatex,sn-basic]{sn-jnl}% Basic Springer Nature Reference Style/Chemistry Reference Style
-\documentclass[pdflatex,sn-mathphys-num]{sn-jnl}% Math and Physical Sciences Numbered Reference Style
-%%\documentclass[pdflatex,sn-mathphys-ay]{sn-jnl}% Math and Physical Sciences Author Year Reference Style
-%%\documentclass[pdflatex,sn-aps]{sn-jnl}% American Physical Society (APS) Reference Style
-%%\documentclass[pdflatex,sn-vancouver-num]{sn-jnl}% Vancouver Numbered Reference Style
-%%\documentclass[pdflatex,sn-vancouver-ay]{sn-jnl}% Vancouver Author Year Reference Style
-%%\documentclass[pdflatex,sn-apa]{sn-jnl}% APA Reference Style
-%%\documentclass[pdflatex,sn-chicago]{sn-jnl}% Chicago-based Humanities Reference Style
+\titleformat*{\section}{\Large\bfseries}
+\titleformat*{\subsection}{\normalsize\bfseries}
 
-%%%% Standard Packages
-%%<additional latex packages if required can be included here>
+\renewcommand{\baselinestretch}{0.9}
 
-\usepackage{graphicx}%
-\usepackage{multirow}%
-\usepackage{amsmath,amssymb,amsfonts}%
-\usepackage{amsthm}%
-\usepackage{mathrsfs}%
-\usepackage[title]{appendix}%
-\usepackage{xcolor}%
-\usepackage{textcomp}%
-\usepackage{manyfoot}%
-\usepackage{booktabs}%
-\usepackage{algorithm}%
-\usepackage{algorithmicx}%
-\usepackage{algpseudocode}%
-\usepackage{listings}
-\usepackage{mathtools}%
+\graphicspath{{./figures/}}
 
-%%%%
+\usepackage[textwidth=8cm, margin=0cm, left=4.6cm, right=4.2cm, top=3.9cm, bottom=6.8cm, a4paper, headheight=0.5cm, headsep=0.5cm]{geometry}
+\usepackage{fancyhdr}
+\usepackage[format=plain, labelfont=it, textfont=it, justification=centering]{caption}
+\usepackage{breakcites}
+\usepackage{microtype}
 
-%%%%%=============================================================================%%%%
-%%%%  Remarks: This template is provided to aid authors with the preparation
-%%%%  of original research articles intended for submission to journals published 
-%%%%  by Springer Nature. The guidance has been prepared in partnership with 
-%%%%  production teams to conform to Springer Nature technical requirements. 
-%%%%  Editorial and presentation requirements differ among journal portfolios and 
-%%%%  research disciplines. You may find sections in this template are irrelevant 
-%%%%  to your work and are empowered to omit any such section if allowed by the 
-%%%%  journal you intend to submit to. The submission guidelines and policies 
-%%%%  of the journal take precedence. A detailed User Manual is available in the 
-%%%%  template package for technical guidance.
-%%%%%=============================================================================%%%%
+\apptocmd{\frame}{}{\justifying}{}
 
-%% as per the requirement new theorem styles can be included as shown below
-\theoremstyle{thmstyleone}%
-\newtheorem{theorem}{Theorem}%  meant for continuous numbers
-%%\newtheorem{theorem}{Theorem}[section]% meant for sectionwise numbers
-%% optional argument [theorem] produces theorem numbering sequence instead of independent numbers for Proposition
-\newtheorem{proposition}[theorem]{Proposition}% 
-%%\newtheorem{proposition}{Proposition}% to get separate numbers for theorem and proposition etc.
+\urlstyle{same}
+\pagestyle{fancy}
 
-\theoremstyle{thmstyletwo}%
-\newtheorem{example}{Example}%
-\newtheorem{remark}{Remark}%
+\newcommand\jucs{{Journal of Universal Computer Science}}
+\newcommand\jucsvol{vol. 27, no. 1 (2021)}
+\newcommand\jucspages{2987-2989}
+\newcommand\jucssubmitted{1/1/2021}
+\newcommand\jucsaccepted{2/2/2021}
+\newcommand\jucsappeared{3/3/2021}
+\newcommand\jucslicence{ CC BY 4.0}
+\newcommand\startingPage{2987}
+\setcounter{page}{\startingPage}
 
-\theoremstyle{thmstylethree}%
-\newtheorem{definition}{Definition}%
+%Author
+\newcommand\paperauthor{{Voroniy, M.: }}
 
-\raggedbottom
-%%\unnumbered% uncomment this for unnumbered level heads
+% Title
+\newcommand\papertitle{Using Trie Data Structure for Database Index Representation}
+
+% Main header content
+\header{\paperauthor \papertitle}
 
 \begin{document}
 
-\title[Using Trie Data Structure for Database Index Representation]{Using Trie Data Structure for Database Index Representation}
+\title{{\fontsize{14pt}{14pt}\selectfont{\vspace*{-3mm}\papertitle\vspace*{-1mm}}}}
 
-%%=============================================================%%
-%% GivenName	-> \fnm{Joergen W.}
-%% Particle	-> \spfx{van der} -> surname prefix
-%% FamilyName	-> \sur{Ploeg}
-%% Suffix	-> \sfx{IV}
-%% \author*[1,2]{\fnm{Joergen W.} \spfx{van der} \sur{Ploeg} 
-%%  \sfx{IV}}\email{iauthor@gmail.com}
-%%=============================================================%%
+\author{{\bfseries\fontsize{10pt}{10pt}\selectfont{Maksym Voroniy}} \\
+   {\fontsize{9pt}{12pt}\selectfont{(National Technical University «KhPI», Kharkiv, Ukraine\\
+   \orcid{0009-0008-7505-5686},
+   maksym.voroniy.research@gmail.com)}}
+}
 
-\author{\fnm{Maksym} \sur{Voroniy} \text{(ORCID:0009-0008-7505-5686)}\email{maksym.voroniy.research@gmail.com}}
+\label{first}
+\maketitle
 
-
-
-%%==================================%%
-%% Sample for unstructured abstract %%
-%%==================================%%
-
-\abstract{Modern database systems rely heavily on time-proven algorithms for
+{\fontfamily{ptm}\selectfont
+\begin{abstract}
+{\fontsize{9pt}{9pt}\selectfont{\vspace*{-2mm}
+Modern database systems rely heavily on time-proven algorithms for
 representing and organizing data on external storage. At the same time,
 they must continuously adapt to evolving hardware architectures and
 changing business demands - such as horizontal scalability for big data
@@ -134,32 +108,31 @@ data structures can be applied to address modern, complex indexing
 problems. The goal is to demonstrate how Tries enable efficient,
 scalable, and structurally expressive representations for arbitrary data
 - offering alternative design trade-offs that are increasingly relevant
-in contemporary database and data-intensive systems.
-}
+in contemporary database and data-intensive systems.}}
+\end{abstract}}
 
-%%================================%%
-%% Sample for structured abstract %%
-%%================================%%
 
-% \abstract{\textbf{Purpose:} The abstract serves both as a general introduction to the topic and as a brief, non-technical summary of the main results and their implications. The abstract must not include subheadings (unless expressly permitted in the journal's Instructions to Authors), equations or citations. As a guide the abstract should not exceed 200 words. Most journals do not set a hard limit however authors are advised to check the author instructions for the journal they are submitting to.
-% 
-% \textbf{Methods:} The abstract serves both as a general introduction to the topic and as a brief, non-technical summary of the main results and their implications. The abstract must not include subheadings (unless expressly permitted in the journal's Instructions to Authors), equations or citations. As a guide the abstract should not exceed 200 words. Most journals do not set a hard limit however authors are advised to check the author instructions for the journal they are submitting to.
-% 
-% \textbf{Results:} The abstract serves both as a general introduction to the topic and as a brief, non-technical summary of the main results and their implications. The abstract must not include subheadings (unless expressly permitted in the journal's Instructions to Authors), equations or citations. As a guide the abstract should not exceed 200 words. Most journals do not set a hard limit however authors are advised to check the author instructions for the journal they are submitting to.
-% 
-% \textbf{Conclusion:} The abstract serves both as a general introduction to the topic and as a brief, non-technical summary of the main results and their implications. The abstract must not include subheadings (unless expressly permitted in the journal's Instructions to Authors), equations or citations. As a guide the abstract should not exceed 200 words. Most journals do not set a hard limit however authors are advised to check the author instructions for the journal they are submitting to.}
+{\fontfamily{ptm}\selectfont
+\begin{keywords}
+{\fontsize{9pt}{9pt}\selectfont{
+    Trie, Prefix Tree, Database Indexing,
+    Memory-Efficient Data Structures, Bitmap Indexing, Page-Oriented Storage
+}}
+\end{keywords}}
 
-\keywords{Trie, Prefix Tree, Database Indexing,
-    Memory-Efficient Data Structures, Bitmap Indexing, Page-Oriented Storage}
+{\fontfamily{ptm}\selectfont
+\begin{category}
+{\fontsize{9pt}{9pt}\selectfont{
+E.1, E.2, E.4, F.2.2, H.2.2, H.3.1}}
+\end{category}}
 
-%%\pacs[JEL Classification]{D8, H51}
-
-%%\pacs[MSC Classification]{35A01, 65L10, 65L12, 65L20, 65L70}
-
-\maketitle
+{\fontfamily{ptm}\selectfont
+\begin{doi}
+{\fontsize{9pt}{9pt}\selectfont{
+10.3897/jucs.\textless SubmissionNumber\textgreater}}
+\end{doi}}
 
 \section{Introduction}\label{sec1}
-
 
 Improving the efficiency of a data structure does not necessarily require replacing its fundamental algorithm. In many practical cases, the largest gains can be achieved by reconsidering how the existing structure is represented in memory.
 
@@ -201,9 +174,11 @@ set of words.
 
 
 \begin{figure}[h]
+\includegraphics[width=0.85\textwidth]{01.3-word}
 \centering
-\includegraphics[width=0.85\textwidth]{images/media/01.3-word}
-\caption{Simple prefix tree}\label{fig:3word}
+\captionsetup{font=small}
+\caption{\fontsize{10pt}{11pt}\selectfont{\itshape{Simple prefix tree}}}
+\label{fig:3word}
 \end{figure}
 
 This example highlights several important concepts fundamental to
@@ -266,9 +241,11 @@ Since the letter "a" is not part of any existing prefix, the root node
 must be extended to include an additional branch.
 
 \begin{figure}[h]
-\centering
-\includegraphics[width=0.85\textwidth]{images/media/02.5-word}
-\caption{Crafting root node}\label{fig:5word}
+    \includegraphics[width=0.85\textwidth]{02.5-word}
+    \centering
+    \captionsetup{font=small}
+    \caption{\fontsize{10pt}{11pt}\selectfont{\itshape{Crafting root node}}}
+    \label{fig:5word}
 \end{figure}
 
 This operation raises an essential design question: what is the internal
@@ -306,12 +283,17 @@ Table~\ref{tab:alphabetExamples} presents several alphabets relevant to the repr
 and subsequent articles.
 
 
-\begin{table}[h]
-\caption{Examples of alphabets}\label{tab:alphabetExamples}%
-\begin{tabular}{@{}l|ll@{}}
-\toprule
-Example & Set definition & Set cardinality (alphabet power) \\
-\midrule
+\begin{table}[ht]
+    \centering
+    \setlength\tabcolsep{6pt}
+\begin{tabular}{|l|l|l@{}|}
+\hline
+\bfseries Example & \bfseries Set definition &
+    \begin{tabular}{l}
+    \bfseries Set cardinality \\
+    \bfseries (alphabet power)
+    \end{tabular} \\
+\hline
 % 1.
 Boolean values - binary alphabet &
 $\Sigma_{2} = \left\{ 0,1\right\}$ &
@@ -328,12 +310,13 @@ Unsigned 8-bit integer  &
 Signed 8-bit integer &
 \(\Sigma_{i128} = \{ - 128,\dots127\}\)&
 \(\left| \Sigma_{i128} \right| = 128\) \\
-\botrule
+\hline
 \end{tabular}
-\footnotetext{
-}
+    \caption{\fontsize{10pt}{11pt}\selectfont{
+        \itshape{Examples of alphabets}
+    }}
+    \label{tab:alphabetExamples}
 \end{table}
-
 \noindent
 
 For example, \(\Sigma_{26}\) can represent the 26 lowercase English letters, that was used in previous chapter
@@ -384,7 +367,8 @@ B-tree - based indexes are closely aligned with page-oriented access
 patterns, which efficiently exploit hardware mechanisms such as Direct
 Memory Access (DMA) and Ultra DMA (UDMA) for transferring large
 contiguous blocks of data between storage devices, memory, and
-processors \cite{fent2020low,vogel2023towards,lasch2024heterogeneous}. By organizing nodes as disk-sized pages, these
+processors \cite{fent2020low,vogel2023towards,lasch2024heterogeneous}.
+By organizing nodes as disk-sized pages, these
 structures minimize I/O operations and achieve high throughput on
 external storage.
 
@@ -394,7 +378,7 @@ fine-grained, pointer-based node representations. To bridge this gap, we
 begin with a conventional node definition and later extend it to better
 exploit page-oriented storage.
 
-\subsubsection{Root Node and Navigation}\label{root-node-and-navigation}
+\subsection{Root Node and Navigation}\label{root-node-and-navigation}
 
 As defined in classical sources \cite{knuthVol3, fds_alg}, a Trie contains a
 distinguished root node corresponding to the empty key $\epsilon$. All operations
@@ -426,15 +410,13 @@ E(k) \rightarrow \{\mathrm{True},\mathrm{False}\}.
 
 For the Trie depicted in Figure~\ref{fig:5word}, the predicate evaluates as follows:
 
-\begin{table}[htbp]
-
-\begin{minipage}{\textwidth} % need this to stretch tabular as caption
-
-    \caption{Sample evaluation of Exists (\(E\)) predicate.}\label{tab:queryExists}%
-    \begin{tabular}{lp{0.5\linewidth} }
-    \toprule
-    Query & Result \\
-    \midrule
+\begin{table}[ht]
+    \centering
+    \setlength\tabcolsep{6pt}
+    \begin{tabular}{|l|p{0.7\linewidth}| }
+    \hline
+    \bfseries Query & \bfseries Result \\
+    \hline
     % 1.
     \(E("art")\) & True \\
     % 2.
@@ -443,9 +425,12 @@ For the Trie depicted in Figure~\ref{fig:5word}, the predicate evaluates as foll
     \(E("ca")\) & False (no such terminal) \\
     % 4.
     \(E("camp")\) & False \\
+    \hline
     \end{tabular}
-
-\end{minipage}
+    \caption{\fontsize{10pt}{11pt}\selectfont{
+        \itshape{Sample evaluation of Exists (\(E\)) predicate.}}
+    }
+    \label{tab:queryExists}
 
 \end{table}
 \noindent
@@ -515,11 +500,12 @@ slot containing either a reference to a child node or an empty value (\texttt{ni
 
 
 \begin{figure}[h]
-\centering
-\includegraphics[width=0.85\textwidth]{./images/media/03.lookup-table}
-\caption{Lookup table example for \(\Sigma_{26}\) alphabet}\label{fig:lookupTable}
+    \includegraphics[width=0.85\textwidth]{03.lookup-table}
+    \centering
+    \captionsetup{font=small}
+    \caption{\fontsize{10pt}{11pt}\selectfont{\itshape{Lookup table example for \(\Sigma_{26}\) alphabet}}}
+    \label{fig:lookupTable}
 \end{figure}
-
 
 As a result, the complexity of the Exists predicate becomes:
 
@@ -626,9 +612,11 @@ at Figure~\ref{fig:adaptiveSizedNodes}, symbols "a" and "c" correspond to bits s
 and "z" correspond to bits set to 0.
 
 \begin{figure}[h]
-\centering
-\includegraphics[width=0.85\textwidth]{./images/media/04.Adaptive-sized-nodes}
-\caption{Combine bitmap with array}\label{fig:adaptiveSizedNodes}
+    \includegraphics[width=0.85\textwidth]{04.Adaptive-sized-nodes}
+    \centering
+    \captionsetup{font=small}
+    \caption{\fontsize{10pt}{11pt}\selectfont{\itshape{Combine bitmap with array}}}
+    \label{fig:adaptiveSizedNodes}
 \end{figure}
 
 Modern processors efficiently support bitmap operations using native
@@ -662,9 +650,11 @@ As a result, this structure removes wasted space while preserving fast
 access and ordered navigation.
 
 \begin{figure}[h]
+    \includegraphics[width=0.85\textwidth]{05.Bitmap-and-Array}
     \centering
-    \includegraphics[width=0.85\textwidth]{./images/media/05.Bitmap-and-Array}
-    \caption{Using array of bitmap for lookup}\label{fig:bitmapAndArray}
+    \captionsetup{font=small}
+    \caption{\fontsize{10pt}{11pt}\selectfont{\itshape{Using array of bitmap for lookup}}}
+    \label{fig:bitmapAndArray}
 \end{figure}
 
 
@@ -679,7 +669,7 @@ Summarizing the properties of this bitmap-array let's articulate:
     \item Lookup has $O(1)$ complexity for a fixed-size alphabet.
 \end{itemize}
 
-\subsubsection{Wrapping things up}\label{wrapping-things-up}
+\subsection{Wrapping things up}\label{wrapping-things-up}
 
 The preceding analysis shows that lookup efficiency ultimately
 depends on how a symbol $b_i$ is mapped to an outgoing edge of a Trie node.
@@ -813,15 +803,77 @@ direct access to minimum and maximum child symbols. Combined with ordered traver
 lexicographically minimum or maximum key of an arbitrary prefix subtree to be located without requiring
 a separate ordering structure.
 
-%%===========================================================================================%%
-%% If you are submitting to one of the Nature Portfolio journals, using the eJP submission   %%
-%% system, please include the references within the manuscript file itself. You may do this  %%
-%% by copying the reference list from your .bbl file, paste it into the main manuscript .tex %%
-%% file, and delete the associated \verb+\bibliography+ commands.                            %%
-%%===========================================================================================%%
+\begin{thebibliography}{}{
+\fontsize{9pt}{10pt}\selectfont
 
-\bibliography{sn-bibliography}% common bib file
-%% if required, the content of .bbl file can be included here once bbl is generated
-%%\input sn-article.bbl
+\bibitem[Knuth. 1998]{knuthVol3}Knuth, D.E.: The Art of Computer Programming, Volume 3: Sorting and
+Searching, 2nd edn. Addison-Wesley, Reading, Mass. (1998)
+
+%%% 2
+\bibitem[HIMANSHU et~al. 2017]{HIMANSHU_CHATURVEDI_BANDYOPADHYAY_JAIN_2017}HIMANSHU, CHATURVEDI, K.K., BANDYOPADHYAY, A., JAIN, S.: Patricia trie based time and memory optimization for fast network motif search. The
+Indian Journal of Animal Sciences 87(4), 512–519 (2017) \url{https://doi.org/10.
+56093/ijans.v87i4.69625}
+
+%%% 3
+\bibitem[Zhang et~al. 2022]{zhang2022memory} Zhang, H., Chen, S., Carey, M.: Memory-efficient and cache-friendly indexing for
+modern database systems. The VLDB Journal 31(6), 1245–1267 (2022)
+
+
+%%% 4
+\bibitem[Idreos et~al. 2019]{idreos2019design}Idreos, S., Dayan, N., Qin, W., Akmanalp, M., Hilgard, S., Ross, A.,
+Lennon, J., Jain, V., Gupta, H., Li, D., Zhu, Z.: Design continuums
+and the path toward self-designing key-value stores that know and learn.
+(2019). \url{https://stratos.seas.harvard.edu/publications/design-continuums-and-pathtoward-self-designing-key-value-stores-know-and}
+
+
+%%% 5
+\bibitem[Fent et~al. 2020]{fent2020low}Fent, P., Renen, A., Kipf, A., Leis, V., Neumann, T., Kemper, A.: Low-latency
+communication for fast dbms using rdma and shared memory. In: 2020 IEEE 36th
+International Conference on Data Engineering (ICDE), pp. 1477–1488 (2020).
+\url{https://doi.org/10.1109/ICDE48307.2020.00131}.
+
+
+%%% 6
+\bibitem[Vogel et~al. 2023]{vogel2023towards} Vogel, L., Hilprecht, B., Binnig, C.: Towards foundation models for relational
+databases [vision paper]. arXiv preprint arXiv:2305.15321 (2023)
+
+%%% 7
+\bibitem[Lasch. 2024]{lasch2024heterogeneous}Lasch, R.: Heterogeneous memory technologies in database management systems.
+PhD thesis, Technische Universit¨at Ilmenau, Ilmenau, Germany (2024). \url{https:
+//doi.org/10.22032/dbt.62299}
+
+%%% 8
+\bibitem[Nipkow. 2025]{fds_alg}Nipkow, T. (ed.): Functional Data Structures and Algorithms: A Proof Assistant
+Approach vol. 67, 1st edn. Association for Computing Machinery, New York, NY,
+USA (2025)
+
+%%% 9
+\bibitem[Feng et~al. 2021]{largescalesearch2021}Feng, D., Liang, M.-G., Gao, F., Huang, Y.-C., Zhang, X.-F., Duan, L.-Y.:
+Towards large-scale object instance search: A multi-block n-ary trie. IEEE Transactions on Circuits and Systems for Video Technology 31(1), 372–386 (2021)
+\url{https://doi.org/10.1109/TCSVT.2020.2966541}
+
+%%% 10
+\bibitem[Yau. 2014]{yau2014distribution}Yau, N.: Distribution of letters in the English language. Accessed:
+September 7, 2026 (2014). https://flowingdata.com/2014/06/01/
+distribution-of-letters-in-the-english-language
+
+%%% 11
+\bibitem[Norvig. 2012]{norvig2012english}Norvig, P.: English Letter Frequency Counts: Mayzner Revisited or ETAOIN
+SRHLDCU. \url{https://norvig.com/mayzner.html}. Accessed: September 7, 2026
+(2012)
+
+%%% 12
+\bibitem[Leis et~al. 2013]{leis2013adaptive} Leis, V., Kemper, A., Neumann, T.: The adaptive radix tree: Artful indexing
+for main-memory databases. In: 2013 IEEE 29th International Conference on
+Data Engineering (ICDE), pp. 38–49 (2013). \url{https://doi.org/10.1109/ICDE.2013.
+6544812}. IEEE
+
+%%% 13
+\bibitem[Farach-Colton  et~al.2025]{farachcolton2025optimalboundsopenaddressing}Farach-Colton, M., Krapivin, A., Kuszmaul, W.: Optimal Bounds for Open
+Addressing Without Reordering (2025). \url{https://arxiv.org/abs/2501.02305}
+
+}\end{thebibliography}
+
+
 
 \end{document}
