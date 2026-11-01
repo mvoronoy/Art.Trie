@@ -46,15 +46,18 @@ abstract = {This book is an introduction to data structures and algorithms for f
 }
 
 % 4
-@article{zhang2022memory,
-  author    = {Zhang, H. and Chen, S. and Carey, M.},
-  title     = {Memory-Efficient and Cache-Friendly Indexing for Modern Database Systems},
-  journal   = {The VLDB Journal},
-  year      = {2022},
-  volume    = {31},
-  number    = {6},
-  pages     = {1245--1267},
-  publisher = {Springer}
+@article{ZHANG2027108851,
+title = {A novel Index-Organized storage model for modern in-memory database systems},
+journal = {Future Generation Computer Systems},
+volume = {188},
+pages = {108851},
+year = {2027},
+issn = {0167-739X},
+doi = {https://doi.org/10.1016/j.future.2026.108851},
+url = {https://www.sciencedirect.com/science/article/pii/S0167739X26004851},
+author = {Qian Zhang and Yiyang Ren and Xueqing Gong and Hassan Ali Khan},
+keywords = {In-memory database systems, Index-Organized, Storage model, Hybrid workload},
+abstract = {Large-scale data-intensive applications require high-throughput real-time data processing. Modern in-memory database systems maintain the primary data copy in main memory and support fast concurrent transactions and analytics on recent data. However, under hybrid workloads with long-running queries, pointer-chasing overhead becomes a major bottleneck that prevents these systems from sustaining high performance. In this work, we investigate the pointer-chasing bottleneck in modern in-memory database systems and propose a novel Index-Organized storage model for efficient reads and writes. Its key innovation is storing the latest versions within the leaf nodes of the tree index, combined with a cacheline-aligned node layout and cache-prefetching-assisted version chains, improving pointer chasing performance. We present three optimizations, i.e., pending version table, fine-grained memory management, and Index-SSN algorithm for supporting efficient transaction processing. We implement Index-Organized on an open-source in-memory database system. Experimental results show that Index-Organized achieves up to a 3× speedup over conventional row-store, column-store, and hybrid row-column storage models.}
 }
 
 % 5
