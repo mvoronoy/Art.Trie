@@ -626,7 +626,10 @@
     node representation, this section presents an experimental comparison
     between a bitmap-array implementation and a conventional ordered array.
 
-    Measurements are performed using fixed-size pages to demonstrate the
+    
+    Measurements \footnote{Benchmark code, compile instructions, used test environment and raw results can be
+    found at \url{https://github.com/mvoronoy/Art.Trie/tree/main/trie-01_Index_Representation/benchmark}.}
+    are performed using fixed-size pages to demonstrate the
     discrete nature of Trie node capacity, which grows in predefined
     increments (e.g., 32, 64, 128, 256). Fixing the page size is also
     important because it eliminates allocator-related delays and memory
@@ -640,8 +643,7 @@
 
     The experimental results are presented separately for each operation in Tables
     \ref{tab:insertResult}, \ref{tab:deleteResult}
-
-
+    
     The expected performance characteristics follow from the underlying data structures:
     bitmap-based lookup requires a bounded number of bitmap operations and \texttt{POPCNT} instructions,
     whereas lookup in an ordered array relies on binary search and therefore has logarithmic complexity.
@@ -851,7 +853,7 @@
 % SELECT
     \begin{table}[ht]
         \resizebox{\columnwidth}{!}{
-            \begin{tabular}{|c|c|c|}
+            \begin{tabular}{|c|r|r|}
                 \hline
                 \bfseries Page Size &
                 \begin{tabular}{l}
