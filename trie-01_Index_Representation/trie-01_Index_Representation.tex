@@ -12,6 +12,8 @@
 \usepackage{graphicx}%
 \usepackage{hyperref}
 \usepackage{multirow}%
+\usepackage{algorithm}%
+\usepackage{algpseudocode}%
 \usepackage{amsmath,amssymb,amsfonts}%
 
 \graphicspath{{./figures/}}
@@ -26,40 +28,40 @@
     maksym.voroniy.research@gmail.com
     }
     \titleodd{Using Trie Data Structure for Database Index Representation}
-    \authoreven{M. Voronoiy.}
+    \authoreven{M. Voroniy.}
     \keywords{Trie, Prefix Tree, Database Indexing,
             Memory-Efficient Data Structures, Bitmap Indexing, Page-Oriented Storage}
     \received{Oct 26, 2026}
 
-    \abstract{Modern database systems rely heavily on time-proven algorithms for
+    \abstract{Modern database systems rely heavily on well-established algorithms for
             representing and organizing data on external storage. At the same time,
-                they must continuously adapt to evolving hardware architectures and
-                changing business demands - such as horizontal scalability for big data
-                workloads and the emergence of vector databases driven by the rapid
-                growth of AI applications.
+            they must continuously adapt to evolving hardware architectures and
+            changing business demands, such as horizontal scalability for big data
+            workloads and the emergence of vector databases driven by the rapid
+            growth of AI applications.
 
-                A vast body of scientific and engineering work has focused on the
-                adaptation and optimization of well-known tree-based indexing structures
-                - such as B-trees, B\textsuperscript{+}-trees, B\textsuperscript{*}-trees, and R-trees - to meet these
-                challenges. These structures have become foundational to modern storage
-                engines due to their strong performance characteristics on
-                block-oriented storage systems.
+            A vast body of scientific and engineering work has focused on the
+            adaptation and optimization of well-known tree-based indexing structures
+            - such as B-trees, B\textsuperscript{+}-trees, B\textsuperscript{*}-trees, and R-trees - to meet these
+            challenges. These structures have become foundational to modern storage
+            engines due to their strong performance characteristics on
+            block-oriented storage systems.
 
-                This article, however, aims to draw attention to a different class of
-                data structures, referred to by Donald Knuth as digital searching
-                techniques \cite{knuthVol3}. Among these, the Trie (also known as a prefix tree)
-                occupies a special place. Unlike comparison-based trees, Tries organize
-                data according to the structure of keys themselves, making them
-                particularly well-suited for representing and indexing wide range of
-                digital data not only well known strings, but bit sequences, and encoded
-                numbers or even vectors.
+            This article, however, aims to draw attention to a different class of
+            data structures, referred to by Donald Knuth as digital searching
+            techniques \cite{knuthVol3}. Among these, the Trie (also known as a prefix tree)
+            occupies a special place. Unlike comparison-based trees, Tries organize
+            data according to the structure of keys themselves, making them
+            particularly well-suited for representing and indexing a wide range of digital
+            data, including not only familiar strings, but bit sequences, and encoded
+            numbers or even vectors.
 
-                This article serves as the first in a series exploring how Trie-based
-                data structures can be applied to address modern, complex indexing
-                problems. The goal is to demonstrate how Tries enable efficient,
-                scalable, and structurally expressive representations for arbitrary data
-                - offering alternative design trade-offs that are increasingly relevant
-                in contemporary database and data-intensive systems.}
+            This article serves as the first in a series exploring how Trie-based
+            data structures can be applied to address modern, complex indexing
+            problems. The goal is to demonstrate how Tries enable efficient,
+            scalable, and structurally expressive representations for arbitrary data
+            - offering alternative design trade-offs that are increasingly relevant
+            in contemporary database and data-intensive systems.}
     \abstractSi{}
 
     \maketitle
@@ -73,15 +75,32 @@
 
     \section{Introduction}\label{sec1}
 
-    Improving the efficiency of a data structure does not necessarily require replacing its fundamental algorithm. In many practical cases, the largest gains can be achieved by reconsidering how the existing structure is represented in memory.
+    Improving the efficiency of a data structure does not necessarily require replacing its fundamental algorithm.
+    In many practical cases, the largest gains can be achieved by reconsidering how the existing structure is
+    represented in memory.
 
-    Trie-based structures provide a particularly illustrative example. A straightforward Trie implementation can represent each node as a fixed-size lookup table indexed by the alphabet. Such a representation provides constant-time navigation, but its memory consumption is proportional to the size of the alphabet rather than to the actual number of children of a node. For sparsely populated nodes, the majority of the allocated space therefore represents absent edges.
+    Trie-based structures provide a particularly illustrative example. A straightforward Trie implementation can
+    represent each node as a fixed-size lookup table indexed by the alphabet.
+    Such a representation provides constant-time navigation, but its memory consumption is proportional to the
+    size of the alphabet rather than to the actual number of children of a node. For sparsely populated nodes,
+    the majority of the allocated space therefore represents absent edges.
 
-    A common approach to this problem is to introduce progressively more sophisticated node representations: hash tables, sorted arrays, or adaptive node types selected according to the number of stored children. These techniques improve the utilization of allocated memory, but they still leave an important question: what is the appropriate unit at which the optimization should be applied?
+    A common approach to this problem is to introduce progressively more sophisticated node representations: hash
+    tables, sorted arrays, or adaptive node types selected according to the number of stored children.
+    These techniques improve the utilization of allocated memory, but they still leave an important question:
+    what is the appropriate unit at which the optimization should be applied?
 
-    This work follows a different principle. Rather than making small, isolated modifications to the Trie algorithm, it treats the node representation itself as an optimization target. In particular, the proposed approach separates the identification of existing edges from their physical storage. A compact bit-indexed structure can represent the presence of children over the complete alphabet, while a contiguous array stores only the actually existing entries. This makes it possible to preserve constant-time navigation and ordered traversal while avoiding the space cost of empty lookup-table entries.
+    This work follows a different principle. Rather than making small, isolated modifications to the Trie algorithm,
+    it treats the node representation itself as an optimization target. In particular, the proposed approach
+    separates the identification of existing edges from their physical storage. A compact bit-indexed structure
+    can represent the presence of children over the complete alphabet, while a contiguous array stores only
+    the actually existing entries. This makes it possible to preserve constant-time navigation and ordered
+    traversal while avoiding the space cost of empty lookup-table entries.
 
-    The objective is therefore not to propose a radically different indexing algorithm, but to demonstrate how small changes in the representation at the right structural level can produce substantial improvements in memory efficiency of the Trie. The following sections develop this idea from the basic Trie representation through sparse-node compression, bit-indexed navigation, and specialized root handling.
+    The objective is therefore not to propose a radically different indexing algorithm, but to demonstrate how
+    small changes in the representation at the right structural level can produce substantial improvements in
+    memory efficiency of the Trie. The following sections develop this idea from the basic Trie representation
+    through sparse-node compression, bit-indexed navigation, and specialized root handling.
 
 
     \section{Results}\label{sec2}
@@ -121,10 +140,9 @@
     \end{figure}
 
     This example highlights several important concepts fundamental to
-    Trie-based structures that are reviewed in details in the following sections.
+    Trie-based structures that are reviewed in detail in the following sections.
 
-    \subsection{Terminal and Non-terminal
-    Nodes}\label{terminal-and-non-terminal-nodes}
+    \subsection{Terminal and non-terminal nodes}\label{terminal-and-non-terminal-nodes}
 
     A prefix tree constructed by combining all possible characters
     implicitly represents a large number of non-existing words, such as
@@ -138,8 +156,7 @@
     "car" and "cart", a terminal node does not necessarily have to be a leaf
     node. Conversely, every leaf node is necessarily terminal.
 
-    \subsection{Structural Redundancy and Space
-    Usage}\label{structural-redundancy-and-space-usage}
+    \subsection{Structural redundancy and space usage}\label{structural-redundancy-and-space-usage}
 
     Another aspect that becomes immediately apparent in Figure~\ref{fig:3word} is the
     potential inefficiency in space usage. For example, the word "computer"
@@ -165,8 +182,7 @@
         and may hold references to child nodes.
     \end{itemize}
 
-    \subsection{Root Expansion and Node
-    Structure}\label{root-expansion-and-node-structure}
+    \subsection{Root expansion and node structure}\label{root-expansion-and-node-structure}
 
     A third important observation arises when adding a string that does not
     share the existing root prefix. For example, consider inserting the
@@ -247,7 +263,7 @@
             \(\left| \Sigma_{byte} \right| = 256\) \\
 % 4.
             Signed 8-bit integer &
-            \(\Sigma_{i128} = \{ - 128,\dots127\}\)&
+            \(\Sigma_{i128} = \{ 0,\dots128\}\)&
             \(\left| \Sigma_{i128} \right| = 128\) \\
             \hline
         \end{tabular}
@@ -257,7 +273,8 @@
     \end{table}
     \noindent
 
-    For example, \(\Sigma_{26}\) can represent the 26 lowercase English letters, that was used in previous chapter
+    For example, \(\Sigma_{26}\) can represent the 26 lowercase English letters,
+    which was used in the previous section
     during non-formal definition of Trie. While \(\Sigma_{byte}\) can represent
     all 256 possible byte values. The latter is particularly relevant for computer-oriented string representations,
     including UTF-8, where a string can be processed as a sequence of bytes.
@@ -271,10 +288,9 @@
     A key is a finite non-empty sequence of symbols from $\Sigma$:
 
     \begin{equation}
-        k = b_{1},b_{2} \ldots,
-        \mathrm{where}\!:
-        b_{i} \in \Sigma  \land  i > 0
+        k = b_{1}, \ldots, b_{m},
     \end{equation}
+    where $m \geq 1$, $b_{i} \in \Sigma$, and $i > 0$.
 
     Since this article focuses on the practical use of Tries for database
     indexing, a key is not sufficient on its own. Each key must be
@@ -283,7 +299,7 @@
     articles, vectors.
 
     A Trie therefore represents a key - value mapping, where a value
-    \(v = V\) is associated with a key $k$ at its terminal position in the
+    \(v \in V\) is associated with a key $k$ at its terminal position in the
     structure.
 
     \subsection{Node}\label{node}
@@ -295,7 +311,8 @@
     databases.
 
     The vast majority of modern database indexing structures are based on
-    B-tree variants, most notably B-trees, B\textsuperscript{+}-trees, and B\textsuperscript{*}-trees \cite{zhang2022memory,idreos2019design}.
+    B-tree variants, most notably B-trees, B\textsuperscript{+}-trees, and B\textsuperscript{*}-trees
+    \cite{ZHANG2027108851,idreos2019design}.
     On the one hand, this dominance can be explained by the existence
     of mature, well-understood algorithms supporting insertion, deletion,
     point queries, and range queries. On the other hand, it is equally
@@ -316,9 +333,9 @@
     begin with a conventional node definition and later extend it to better
     exploit page-oriented storage.
 
-    \subsection{Root Node and Navigation}\label{root-node-and-navigation}
+    \subsection{Root node and navigation}\label{root-node-and-navigation}
 
-    As defined in classical sources \cite{knuthVol3, fds_alg}, a Trie contains a
+    As defined in classical sources \cite{knuthVol3,fds_alg}, a Trie contains a
     distinguished root node corresponding to the empty key $\epsilon$. All operations
     on the Trie begin at this root.
     However, the empty string is not considered a valid key in the
@@ -380,7 +397,7 @@
     the outgoing edges of each Trie node are represented.
 
 
-    \subsubsection{Lookup Complexity with Linear Edge Scanning}
+    \subsubsection{Lookup complexity with linear edge scanning}
     \label{lookup-complexity-with-linear-edge-scanning}
 
     Let us analyze the complexity of the lookup operation \cite{largescalesearch2021} using a naive node representation.
@@ -419,20 +436,20 @@
     However, an even more direct approach is to eliminate the need for edge scanning altogether by mapping each
     symbol to a predetermined position. This leads to the lookup-table representation described in the following section.
 
-    \subsubsection{Lookup Table}
+    \subsubsection{Lookup table}
     \label{lookup-table}
 
     A common optimization is to provide each node with a lookup table indexed by the alphabet $\Sigma$. In this
     representation, as depicted in Figure~\ref{fig:lookupTable}, each possible symbol corresponds to a fixed
-    slot containing either a reference to a child node or an empty value (\texttt{nil}). So applying lookup table allows:
-
+    slot containing either a reference to a child node or an empty value (\texttt{nil}).
+    Using a lookup table makes it possible to:
     \begin{itemize}
         \item
-        to achieve constant-time of child selection,
+        to achieve constant-time child selection,
         \item
-        to travers directly node symbols \(b_{1},b_{2}\ \dots b_{m}\),
+        to traverse the key symbols directly \(b_{1},b_{2}\ \dots b_{m}\),
         \item
-        eliminated search iteration over outgoing edges.
+        to eliminate iteration over outgoing edges.
     \end{itemize}
 
 
@@ -469,7 +486,7 @@
     issue becomes particularly visible when indexing natural-language data.
 
     Consider English words over an alphabet \(\Sigma_{26}\). As demonstrated
-    in prior studies \cite{yau2014distribution, norvig2012english} , English spelling rules forbid most letter
+    in prior studies \cite{yau2014distribution,norvig2012english} , English spelling rules forbid most letter
     combinations. For example, a word starting with the letter "q" is almost
     always followed by "u", creating a strong statistical bias at the second
     level of the Trie. As a result, a lookup table allocated for all 26
@@ -483,7 +500,7 @@
     The next section examines these alternatives and analyzes their impact
     on lookup performance and memory layout.
 
-    \subsubsection{Page Space Optimization}\label{page-space-optimization}
+    \subsubsection{Page space optimization}\label{page-space-optimization}
 
     To overcome the space inefficiency of lookup-table - based nodes, we
     need to select alternative data structures that satisfy the following
@@ -591,8 +608,7 @@
         \label{fig:bitmapAndArray}
     \end{figure}
 
-
-    Summarizing the properties of this bitmap-array let's articulate:
+    The properties of the bitmap-array representation can be summarized as follows:
     \begin{itemize}
         \item
         Bitmap operations are directly supported by native CPU instructions.
@@ -603,6 +619,260 @@
         \item Lookup has $O(1)$ complexity for a fixed-size alphabet.
     \end{itemize}
 
+
+    \subsection{Experimental evaluation}
+
+    To avoid unsubstantiated claims regarding the efficiency of bitmap-based
+    node representation, this section presents an experimental comparison
+    between a bitmap-array implementation and a conventional ordered array.
+
+    Measurements are performed using fixed-size pages to demonstrate the
+    discrete nature of Trie node capacity, which grows in predefined
+    increments (e.g., 32, 64, 128, 256). Fixing the page size is also
+    important because it eliminates allocator-related delays and memory
+    reallocation overhead from the measurements.
+
+    The benchmark evaluates all three fundamental operations: insertion, deletion, and lookup.
+    To provide representative measurements, the test scenarios include both positive and
+    negative key probes, i.e., operations involving keys that are already present in the data structure
+    and keys that are absent. This approach allows evaluating not only successful
+    operations but also the behavior of the implementations when requested keys cannot be found.
+
+    The experimental results are presented separately for each operation in Tables
+    \ref{tab:insertResult}, \ref{tab:deleteResult}
+
+
+    The expected performance characteristics follow from the underlying data structures:
+    bitmap-based lookup requires a bounded number of bitmap operations and \texttt{POPCNT} instructions,
+    whereas lookup in an ordered array relies on binary search and therefore has logarithmic complexity.
+    The results are discussed in the context of these theoretical expectations.
+
+    An important consideration is the availability of the \texttt{POPCNT}
+    instruction in modern CPUs, which efficiently calculates the number
+    of set bits in an integer value. This operation is particularly useful
+    for determining the position of an element in a compact array using
+    its corresponding bitmap.
+
+    As mentioned earlier, a bitmap-array consists of two parts: an array
+    of payloads (hereafter referred to as the \textit{payload array}) and
+    an array of unsigned integers (hereafter referred to as the
+    \textit{bitmap}) indicating the presence of individual entries.
+    The implementation provides conventional container operations:
+    insertion, deletion, and lookup of a payload $V$ for a given symbol
+    $b \in \Sigma$.
+
+    Each symbol uniquely determines the position of its corresponding bit
+    in the bitmap. The position of an existing entry in the payload array
+    is determined by counting all set bits preceding the corresponding
+    key. Consequently, the bitmap provides both an existence indicator
+    and an efficient mapping from a symbol to its position in the compact
+    payload array.
+
+    \subsubsection{Insertion}
+
+    Insertion into a bitmap-array first checks whether the corresponding
+    bit is already set. If the symbol is not present, the number of set bits
+    preceding its position, calculated using \texttt{POPCNT}, determines the
+    insertion position in the payload array.
+
+    To maintain the ordering of payloads, existing entries starting from
+    the insertion position must be shifted one position to the right.
+    Finally, the new payload is inserted and the corresponding bitmap
+    bit is set.
+
+    \begin{algorithm}
+        \caption{Insert into bitmap-array}
+        \label{alg:bitmap-insert}
+        \begin{algorithmic}[1]
+\Require Key $b$, payload $v$, bitmap $M$, payload array $P$
+\Ensure Updated bitmap-array, extended payload-array
+\State $n \gets |P|$
+\State $i \gets \operatorname{ordinal}(b)$
+\If{$\operatorname{test}(M,i)$}
+    \State \Return \textbf{false}
+\EndIf
+\State $r \gets \operatorname{rank}(M,i)$
+\State // shift elements right and implicitly increases |P|
+\For{$j \gets n$ \textbf{downto} $r+1$}
+    \State $P[j] \gets P[j-1]$
+\EndFor
+\State $P[r] \gets v$
+\State $\operatorname{set}(M,i)$
+\State \Return \textbf{true}
+        \end{algorithmic}
+    \end{algorithm}
+
+    \bigskip
+
+    Here, $\operatorname{rank}(M,i)$ denotes the number of set bits at
+    positions strictly preceding $i$ by the following formula:
+        \begin{equation}
+        rank(M, i)= POPCNT(M[i] \& (2^i - 1))
+        \end{equation}
+
+    While \(test\),
+    \(set\), and \(ordinal\) represent the
+    corresponding bitmap and key-indexing operations.
+
+    Table~\ref{tab:insertResult} presents the measured insertion performance of both implementations for
+    different page capacities. The measurements demonstrate the impact of maintaining an ordered
+    payload array in both approaches. Although the bitmap representation provides efficient calculation
+    of the insertion position, inserting a new payload still requires shifting subsequent entries to
+    preserve ordering. Therefore, both implementations have linear worst-case insertion complexity, while their
+    practical performance depends on the cost of locating the insertion position and shifting entries.
+
+% INSERT
+    \begin{table}[ht]
+        \resizebox{\columnwidth}{!}{
+            \begin{tabular}{|c|r|r|}
+                \hline
+                \bfseries Page Size &
+                \begin{tabular}{l}
+                    \bfseries Bitmap-indexed \\
+                    \bfseries container ($\mathrm{ns}$)
+                \end{tabular} &
+                \bfseries Ordered vector ($\mathrm{ns}$) \\
+                \hline
+                32 &    392.18 &   2252.16 \\
+                64 &    1533.66 &   9036.38 \\
+                128 &    6402.82 &  141895.64 \\
+                256 &   28255.23 &  640219.42 \\
+                \hline
+            \end{tabular}
+        }
+        \caption{Benchmarking insert operation.}
+        \label{tab:insertResult}
+
+    \end{table}
+
+
+    \subsubsection{Deletion}
+
+    Deletion first checks whether the requested key exists in the bitmap.
+    If the corresponding bit is not set, no modification is required.
+    Otherwise, the rank operation determines the payload position
+    associated with the key.
+
+    After removing the payload, all subsequent entries are shifted one
+    position to the left to preserve the compact representation and
+    ordering. Finally, the corresponding bit is cleared and the number
+    of stored entries is decremented.
+
+    \begin{algorithm}
+        \caption{Delete from bitmap-array}
+        \label{alg:bitmap-delete}
+        \begin{algorithmic}[1]
+\Require Key $b$, bitmap $M$, payload array $P$
+\Ensure Updated bitmap-array
+\State $i \gets \operatorname{ordinal}(b)$
+\If{\textbf{not} $\operatorname{test}(M,i)$}
+    \State \Return \textbf{false}
+\EndIf
+\State $r \gets \operatorname{rank}(M,i)$
+\State // shift elements left and implicitly decreases |P|
+\For{$j \gets r$ \textbf{to} $n-2$}
+    \State $P[j] \gets P[j+1]$
+\EndFor
+\State $\operatorname{clear}(M,i)$
+\State \Return \textbf{true}
+        \end{algorithmic}
+    \end{algorithm}
+
+
+    Table~\ref{tab:deleteResult} presents the measured deletion performance. Similar to insertion,
+    deletion requires maintaining the compact and ordered representation of payloads. Although the
+    bitmap allows direct identification of the corresponding payload position, subsequent
+    entries must be shifted to fill the resulting gap. Consequently, the bitmap representation
+    does not eliminate the linear cost of payload movement. The measured results
+    illustrate the practical overhead of these operations for different page capacities.
+
+    % DELETE
+    \begin{table}[ht]
+        \resizebox{\columnwidth}{!}{
+            \begin{tabular}{|c|r|r|}
+                \hline
+                \bfseries Page Size &
+                \begin{tabular}{l}
+                    \bfseries Bitmap-indexed \\
+                    \bfseries container ($\mathrm{ns}$)
+                \end{tabular} &
+                \bfseries Ordered vector ($\mathrm{ns}$)\\
+                \hline
+                     32 &     352.65 &   1486.29 \\
+                     64 &    1484.93 &    7135.33 \\
+                     128 &   6229.47 &  101883.60 \\
+                     256  &  26834.65 &  469980.42 \\
+                \hline
+            \end{tabular}
+        }
+        \caption{Benchmarking delete operation.}
+        \label{tab:deleteResult}
+    \end{table}
+
+
+    \subsubsection{Lookup}
+
+    Lookup (or Find) uses the bitmap to determine whether the requested
+    key exists. If the corresponding bit is unset, the operation
+    immediately reports that the key is absent.
+
+    Otherwise, the rank operation calculates the position of the
+    corresponding payload in the compact array. The payload is then
+    returned without requiring a search through the array.
+
+    \begin{algorithm}
+        \caption{Find in bitmap-array}
+        \label{alg:bitmap-find}
+        \begin{algorithmic}[1]
+\Require Key $b$, bitmap $M$, payload array $P$
+\Ensure Payload associated with $b$, or nil
+\State $i \gets \operatorname{ordinal}(b)$
+\If{\textbf{not} $\operatorname{test}(M,i)$}
+    \State \Return nil
+\EndIf
+\State $r \gets \operatorname{rank}(M,i)$
+\State \Return $P[r]$
+        \end{algorithmic}
+    \end{algorithm}
+
+
+    Table~\ref{tab:findResult} presents the measured lookup performance. Unlike insertion and deletion,
+    lookup does not require modifying the payload array. The bitmap implementation determines the
+    existence of a key using a single bit test and, when present, calculates its payload position
+    using \texttt{POPCNT}. Since the bitmap occupies a fixed number of machine words for the evaluated page
+    capacities, this operation has constant time complexity, $O(1)$.
+
+    In contrast, lookup in the ordered-array implementation relies on binary search, resulting in
+    logarithmic complexity, $O(\log N)$, where $N$ is the number of stored entries. Therefore,
+    the experimental results are expected to demonstrate an increasing performance difference
+    between the two approaches as the number of entries grows. This behavior is consistent with
+    their respective theoretical complexity characteristics.
+
+% SELECT
+    \begin{table}[ht]
+        \resizebox{\columnwidth}{!}{
+            \begin{tabular}{|c|c|c|}
+                \hline
+                \bfseries Page Size &
+                \begin{tabular}{l}
+                    \bfseries Bitmap-indexed \\
+                    \bfseries container ($\mathrm{ns}$)
+                \end{tabular} &
+                \bfseries Ordered vector ($\mathrm{ns}$) \\
+                \hline
+                    32  & 20.63 &    140.80 \\
+                    64  & 32.62 &    283.58 \\
+                    128 & 97.61 &    1413.47 \\
+                    256 & 110.10 &   1560.39 \\
+                \hline
+            \end{tabular}
+        }
+        \caption{Benchmarking find operation.}
+        \label{tab:findResult}
+    \end{table}
+
+
+
     \subsection{Wrapping things up}\label{wrapping-things-up}
 
     The preceding analysis shows that lookup efficiency ultimately
@@ -611,7 +881,7 @@
     between key elements and edges of a graph, which is the fundamental
     structural principle of the Trie data structure. Let $T$ be set of all Trie nodes. Then Trie
     defines a transition function that, for a given node \(n \in T\) and a symbol \(b \in \Sigma\),
-    selects the outgoing edge labeled by $b$ and returns the corresponding
+    navigates the outgoing edge labeled by $b$ and returns the corresponding
     child node or (\texttt{nil}).
 
     \begin{equation}
@@ -672,7 +942,7 @@
     Nodes and edges can be equipped with additional information, allowing the mapping $F$ to be extended
     from locating a key to retrieving its associated value and other structural metadata.
 
-    \subsubsection{Value retrieving}\label{value-retrieving}
+    \subsubsection{Value retrieval}\label{value-retrieval}
 
     Following the logic represented in (\ref{eq:mappingFunction}) association of value $v$ with key $k$ can be
     expressed as:
