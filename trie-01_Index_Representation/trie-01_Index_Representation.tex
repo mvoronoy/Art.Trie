@@ -103,14 +103,25 @@
     through sparse-node compression, bit-indexed navigation, and specialized root handling.
 
 
-    \section{Results}\label{sec2}
+    \section{Results}\label{sec:results}
+        The research resulted in a Trie representation designed to provide efficient indexing of
+        binary and character-based keys. The proposed approach combines a compact representation of node
+        connectivity with efficient mechanisms for identifying and accessing child nodes.
 
-    \begin{itemize}
-        \item Introduced a step-by-step approach to formalizing the Trie data structure as a foundation for further research.
-        \item Proposed a space-efficient node representation based on bitmap indexing and compact arrays for sparsely populated Trie nodes.
-    \end{itemize}
+        The theoretical analysis establishes the computational characteristics of the fundamental Trie operations
+        and examines the relationship between the representation of node connectivity,
+        alphabet cardinality, and operation complexity.
 
-    \section{Informal Trie introduction}\label{informal_intro}
+        An experimental evaluation was conducted to assess the performance of the proposed representation.
+        The evaluation covers the fundamental operations of insertion, deletion, and lookup,
+        considering different numbers of child nodes within a Trie node. The results are compared with
+        those obtained using a conventional ordered-storage representation.
+
+        The experimental findings provide an empirical assessment of the proposed approach,
+        including its performance characteristics under varying node occupancy conditions and the practical
+        implications of using bitmap-based node representation.
+
+    \section{Informal Trie introduction}\label{sec:informal_intro}
 
     A Trie, also known as a prefix tree or digital tree, is a tree-based data structure
     originally developed for storing and efficiently retrieving strings. Unlike
@@ -263,8 +274,8 @@
             \(\left| \Sigma_{byte} \right| = 256\) \\
 % 4.
             Signed 8-bit integer &
-            \(\Sigma_{i128} = \{ 0,\dots128\}\)&
-            \(\left| \Sigma_{i128} \right| = 128\) \\
+            \(\Sigma_{i128} = \{ -127,\dots128\}\)&
+            \(\left| \Sigma_{i128} \right| = 256\) \\
             \hline
         \end{tabular}
         }
