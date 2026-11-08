@@ -886,7 +886,7 @@
 
 
 
-    \subsection{Wrapping things up}\label{wrapping-things-up}
+    \subsection{Wrapping things up}\label{sec:wrapping-things-up}
 
     The preceding analysis shows that lookup efficiency ultimately
     depends on how a symbol $b_i$ is mapped to an outgoing edge of a Trie node.
@@ -955,7 +955,7 @@
     Nodes and edges can be equipped with additional information, allowing the mapping $F$ to be extended
     from locating a key to retrieving its associated value and other structural metadata.
 
-    \subsubsection{Value retrieval}\label{value-retrieval}
+    \subsubsection{Value retrieval}\label{sec:value-retrieval}
 
     Following the logic represented in (\ref{eq:mappingFunction}) association of value $v$ with key $k$ can be
     expressed as:
@@ -967,7 +967,7 @@
         \end{array}\label{eq:mappingValue}
     \end{equation}
 
-    \subsubsection{Structural metadata retrieving}\label{meta-retrieving}
+    \subsubsection{Structural metadata retrieving}\label{sec:meta-retrieving}
     The properties of the data structures discussed in this article allow certain types of
     metadata to be obtained directly from the representation. In particular, for a node corresponding
     to a prefix $P$, the bitmap and ordered child array provide the following operations:
@@ -995,6 +995,29 @@
         requiring a separate ordering structure.
 
     \end{itemize}
+
+    \subsubsection{Trie structural stability under modification operations}
+
+    Unlike B-Tree-based indexing structures, including B+ and B* trees, a Trie does not require balancing
+    operations to maintain its structural properties as keys are inserted or deleted. The height of a B-Tree is
+    maintained through node splitting, redistribution, merging, and, in some cases, structural changes propagated
+    towards the root. These operations introduce additional structural maintenance costs that
+    depend on the existing tree organization.
+
+    In contrast, Trie growth is inherently incremental. Each key is represented by a path determined by its
+    constituent symbols, and insertion extends this path only where the required edges or nodes do not already
+    exist. Existing paths remain unchanged, and no rebalancing, redistribution, or splitting of previously
+    established nodes is necessary.
+
+    Similarly, Trie shrinking is incremental. When a key is deleted, nodes that are no longer required by any
+    remaining key can be removed along the corresponding path. This process does not require merging or
+    redistributing other nodes, nor does it require reorganizing the remaining paths.
+
+    Therefore, Trie insertion and deletion do not incur structural maintenance operations associated with
+    preserving a global balancing invariant. Structural modifications are confined to the paths affected by
+    the inserted or deleted keys. The resulting changes depend on key length, shared prefixes, and the number
+    of nodes that must be created or removed, rather than on the need to periodically reorganize the entire
+    indexing structure.
 
 
     \section{Conclusion}
