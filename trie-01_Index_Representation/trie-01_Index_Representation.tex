@@ -24,7 +24,7 @@
 \begin{document}
     \title{Using Trie Data Structure for Database Index Representation}
     \author{Maksym Voroniy \\
-    NTU "KhPI"\\
+    NTU "KhPI, Ukraine"\\
     maksym.voroniy.research@gmail.com
     }
     \titleodd{Using Trie Data Structure for Database Index Representation}
@@ -128,7 +128,7 @@
     comparison-based search trees, where a complete key is typically stored in a node
     and compared with other keys, a Trie represents a key by a path from the root through a sequence of nodes.
 
-    The simplest - though informal - way to introduce the Trie data
+    The simplest, though informal way to introduce the Trie data
     structure is to start by grouping several strings and observing their
     shared prefixes. Consider the following set of words:
 
@@ -274,8 +274,8 @@
             \(\left| \Sigma_{byte} \right| = 256\) \\
 % 4.
             Signed 8-bit integer &
-            \(\Sigma_{i128} = \{ -127,\dots128\}\)&
-            \(\left| \Sigma_{i128} \right| = 256\) \\
+            \(\Sigma_{i8} = \{ -127,\dots128\}\)&
+            \(\left| \Sigma_{i8} \right| = 256\) \\
             \hline
         \end{tabular}
         }
@@ -323,7 +323,7 @@
 
     The vast majority of modern database indexing structures are based on
     B-tree variants, most notably B-trees, B\textsuperscript{+}-trees, and B\textsuperscript{*}-trees
-    \cite{ZHANG2027108851,idreos2019design}.
+    \cite{silberschatz2019database,idreos2019design}.
     On the one hand, this dominance can be explained by the existence
     of mature, well-understood algorithms supporting insertion, deletion,
     point queries, and range queries. On the other hand, it is equally
@@ -497,7 +497,7 @@
     issue becomes particularly visible when indexing natural-language data.
 
     Consider English words over an alphabet \(\Sigma_{26}\). As demonstrated
-    in prior studies \cite{yau2014distribution,norvig2012english} , English spelling rules forbid most letter
+    in prior studies \cite{yau2014distribution,norvig2012english}, English spelling rules forbid most letter
     combinations. For example, a word starting with the letter "q" is almost
     always followed by "u", creating a strong statistical bias at the second
     level of the Trie. As a result, a lookup table allocated for all 26
@@ -511,9 +511,9 @@
     The next section examines these alternatives and analyzes their impact
     on lookup performance and memory layout.
 
-    \subsubsection{Page space optimization}\label{page-space-optimization}
+    \subsubsection{Compact node representation}\label{compact-node-representation}
 
-    To overcome the space inefficiency of lookup-table - based nodes, we
+    To overcome the space inefficiency of lookup-table-based nodes, we
     need to select alternative data structures that satisfy the following
     requirements:
 
@@ -537,7 +537,6 @@
 
     \end{itemize}
 
-
     A widely adopted memory-saving technique is to combine full lookup
     tables for densely populated nodes with compact control structures for
     sparse nodes. This idea is formalized in the family of data structures
@@ -553,20 +552,20 @@
     justified.
 
     Some approaches \cite{farachcolton2025optimalboundsopenaddressing} propose the use of hash tables with open
-    addressing for sparse nodes. While effective for lookup, hash tables
+    addressing for sparse nodes. While effective for lookup, conventional hash tables
     lack inherent ordering and introduce additional complexity. Instead, we
     can craft a custom node representation that satisfies all previously
     stated requirements: fast lookup, ordered navigation, linear memory
     layout, and efficient space usage.
 
     We begin with a bitmap that encodes the presence or absence of outgoing
-    edges. Each bit corresponds to one symbol \(b_{i}\) .
+    edges. Each bit corresponds to one symbol \(b_{i}\).
 
     \begin{itemize}
         \item
-        bit value 1 - means corresponding child exists
+        A bit value of 1 indicates that the corresponding child exists.
         \item
-        bit value 0 - means no child for that symbol.
+        A bit value of 0 indicates no child for that symbol.
     \end{itemize}
 
     The bitmap size exactly matches the alphabet size \(|\Sigma|\).
@@ -578,7 +577,7 @@
     \begin{figure}[h]
         \includegraphics[width=0.5\textwidth]{04.Adaptive-sized-nodes}
         \centering
-        \caption{Combine bitmap with array}
+        \caption{Combining a bitmap with an array}
         \label{fig:adaptiveSizedNodes}
     \end{figure}
 
@@ -630,6 +629,15 @@
         \item Lookup has $O(1)$ complexity for a fixed-size alphabet.
     \end{itemize}
 
+    Unlike the Adaptive Radix Tree (ART), which employs different node representations depending
+    on the number of outgoing edges, the proposed approach maintains a uniform representation
+    across all node occupancy levels. ART uses different child-navigation mechanisms for
+    its Node4, Node16, Node48, and Node256 variants, including ordered-key search, indirect
+    pointer indexing.
+    The proposed bitmap-array representation avoids such transitions. A bitmap encodes the presence
+    of outgoing edges, while a compact ordered array stores the corresponding child pointers. The position
+    of a child is determined through bitmap rank calculation.
+
 
     \subsection{Experimental evaluation}
 
@@ -637,10 +645,8 @@
     node representation, this section presents an experimental comparison
     between a bitmap-array implementation and a conventional ordered array.
 
-    
-    Measurements \footnote{Benchmark code, compile instructions, used test environment and raw results can be
-    found at \url{https://github.com/mvoronoy/Art.Trie/tree/main/trie-01_Index_Representation/benchmark}.}
-    are performed using fixed-size pages to demonstrate the
+    Measurements (see Appendix~\ref{sec:benchmarking-details}) are performed using
+    fixed-size pages to demonstrate the
     discrete nature of Trie node capacity, which grows in predefined
     increments (e.g., 32, 64, 128, 256). Fixing the page size is also
     important because it eliminates allocator-related delays and memory
@@ -691,7 +697,10 @@
     To maintain the ordering of payloads, existing entries starting from
     the insertion position must be shifted one position to the right.
     Finally, the new payload is inserted and the corresponding bitmap
-    bit is set.
+    bit is set (see Algorithm~\ref{alg:bitmap-insert}).
+
+    \bigskip
+
 
     \begin{algorithm}
         \caption{Insert into bitmap-array}
@@ -705,7 +714,7 @@
     \State \Return \textbf{false}
 \EndIf
 \State $r \gets \operatorname{rank}(M,i)$
-\State // shift elements right and implicitly increases |P|
+\State // shift elements right and implicitly increases $|P|$
 \For{$j \gets n$ \textbf{downto} $r+1$}
     \State $P[j] \gets P[j-1]$
 \EndFor
@@ -715,17 +724,30 @@
         \end{algorithmic}
     \end{algorithm}
 
-    \bigskip
-
-    Here, $\operatorname{rank}(M,i)$ denotes the number of set bits at
+    Here, \(test\),  \(set\), and \(ordinal\) represent the corresponding bitmap
+    and key-indexing operations. While $\operatorname{rank}(M,i)$ denotes the number of set bits at
     positions strictly preceding $i$ by the following formula:
         \begin{equation}
         rank(M, i)= POPCNT(M[i] \& (2^i - 1))
         \end{equation}
 
-    While \(test\),
-    \(set\), and \(ordinal\) represent the
-    corresponding bitmap and key-indexing operations.
+    \bigskip
+    For a bitmap consisting of more than one machine words, let:
+
+    \(
+    q=\left\lfloor\frac{i}{64}\right\rfloor,
+    \qquad
+    r=i\bmod64.
+    \)
+    Then the rank of bit \(i\), counting set bits at positions strictly preceding \(i\), should be:
+
+\begin{equation}
+    \begin{aligned}
+            rank(M,i) = \sum_{j=0}^{q-1} POPCNT(M_j) + \\
+            POPCNT\left(M_q\ \&\ (2^r-1)\right).
+    \end{aligned}
+\end{equation}
+
 
     Table~\ref{tab:insertResult} presents the measured insertion performance of both implementations for
     different page capacities. The measurements demonstrate the impact of maintaining an ordered
@@ -777,12 +799,13 @@
         \begin{algorithmic}[1]
 \Require Key $b$, bitmap $M$, payload array $P$
 \Ensure Updated bitmap-array
+\State $n \gets |P|$
 \State $i \gets \operatorname{ordinal}(b)$
 \If{\textbf{not} $\operatorname{test}(M,i)$}
     \State \Return \textbf{false}
 \EndIf
 \State $r \gets \operatorname{rank}(M,i)$
-\State // shift elements left and implicitly decreases |P|
+\State // shift elements left and implicitly decreases $|P|$
 \For{$j \gets r$ \textbf{to} $n-2$}
     \State $P[j] \gets P[j+1]$
 \EndFor
@@ -886,7 +909,7 @@
 
 
 
-    \subsection{Wrapping things up}\label{sec:wrapping-things-up}
+    \subsection{Formal Trie representation and derived properties}\label{sec:formal-representation}
 
     The preceding analysis shows that lookup efficiency ultimately
     depends on how a symbol $b_i$ is mapped to an outgoing edge of a Trie node.
@@ -905,29 +928,31 @@
     $n$, where do we go when we read symbol $b$?''
 
     \begin{equation}
-        f(n,~b)= \Biggl\{
-        \begin{array}{ll}
-            n, & \text{if an edge } n \xrightarrow{\text{b}}n' ~exists,\\
+        f(n,~b)=
+        \begin{cases}
+            n', & \text{if an edge } n \xrightarrow{\text{b}}n' ~exists,\\
             \bot, & \text{otherwise}.
-        \end{array}\label{eq:mappingFunction}
+        \end{cases}\label{eq:mappingFunction}
     \end{equation}
 
 
     Since a key is a sequence of symbols \(b_1, b_2\dots b_m\), repeated application of this
     transition function defines a mapping from keys to nodes of the graph. Starting from the
-    root node, we can define the traversal function F as a composition of transitions:
+    root node, we can define the traversal function F as a recursion of transitions:
 
     \begin{equation}
         \begin{array}{ll}
-            F: \oslash  \rightarrow \bot \\
-            F: \left\{ b_{1},b_{2}\ \dots b_{m} \right\} \rightarrow f( b_{1} ) \circ f(b_{2}) \circ \dots f(b_{m})
-        \end{array}\label{eq:composeLetterMap}
+            F(\oslash) = root, \\
+            F([b_{1}]) = f(root,~b_{1}), \\
+            F([b_{1}, \ldots, b_{m}]) = f(F([b_{1},\ldots, b_{m-1}]),~b_{m})
+        \end{array}
+        \label{eq:composeLetterMap}
     \end{equation}
 
     With this in mind, a Trie can be formally defined as a tuple:
 
     \begin{equation}
-        Trie \: < \Sigma, T, E, \mathrm{root}, f >
+        Trie \: < \Sigma, T, E, root, f >
     \end{equation}
 
     where:
@@ -1043,6 +1068,115 @@
     lexicographically minimum or maximum key of an arbitrary prefix subtree to be located without requiring
     a separate ordering structure.
 
+    \appendix
+    \section{Benchmarking details}\label{sec:benchmarking-details}
+    The benchmark is implemented in C++20 and is designed to compare
+    the following two container representations:
+
+    \begin{itemize}
+        \item \textbf{Bitmap-indexed container:} an array of 64-bit
+        unsigned integers indicates which symbols are present, while
+        a compact array stores only the corresponding payload values.
+        The \texttt{POPCOUNT} instruction (exposed through
+        \texttt{std::popcount}) is used to calculate the position
+        of a payload in the compact array.
+
+        \item \textbf{Ordered array:} a fixed-size \texttt{std::array}
+        stores $(symbol, value)$ pairs sorted by symbol. Binary search
+        is used for lookup, while insertion and deletion preserve
+        the ordering of entries.
+    \end{itemize}
+
+    The benchmark measures insertion, deletion, and lookup separately,
+    at multiple container occupancies. Both implementations are tested
+    using identical operation traces. Each test includes warm-up
+    iterations followed by repeated timed measurements. A checksum
+    is used to ensure that the results of the operations are observable
+    and that the compiler cannot eliminate the measured work
+    as dead code.
+
+
+    The benchmark was compiled using Clang++ 18.1.8 with the following
+    optimization flags:
+
+    \begin{itemize}
+        \item \texttt{-O3}: Enables an aggressive set of compiler
+        optimizations aimed at maximizing execution speed, including
+        function inlining, loop transformations, and vectorization
+        where applicable.
+
+        \item \texttt{-m64}: Generates code targeting a 64-bit
+        architecture, enabling 64-bit registers and addressing
+        on the target platform.
+
+        \item \texttt{-march=native}: Enables CPU-specific
+        optimizations based on the architecture of the machine
+        performing the compilation, allowing the compiler to
+        utilize available processor instructions.
+
+        \item \texttt{-flto}: Enables Link-Time Optimization (LTO),
+        allowing the compiler to perform optimizations across
+        translation units during the linking phase.
+    \end{itemize}
+
+    The benchmark was executed in the following environment:
+
+    \begin{table}[ht]
+        \centering
+        \setlength{\tabcolsep}{6pt}
+        \resizebox{\columnwidth}{!}{
+            \begin{tabular}{|p{0.7\linewidth}|l|}
+                \hline
+                CPU model and architecture &
+                13th Gen Intel(R) Core(TM) i7-13800H \\
+                \hline
+                Operating system &
+                Ubuntu 22.04.5 LTS \\
+                \hline
+                Warm-up repetitions & 10 \\
+                \hline
+                Measurement repetitions & 1000 \\
+                \hline
+            \end{tabular}
+        }
+        \caption{Experimental environment and benchmark configuration}
+        \label{tab:experimental-env}
+    \end{table}
+
+    For each test case, the benchmark performs 10 warm-up iterations,
+    followed by 1000 timed repetitions. Execution time is measured
+    in nanoseconds using the C++ \texttt{std::chrono::steady\_clock}.
+    The reported measurement is the arithmetic mean of the recorded
+    execution times.
+
+    The measurement procedure excludes auxiliary operations such
+    as memory allocation and deallocation. Container storage is
+    prepared outside the measured execution interval, allowing
+    the experiment to focus on the computational cost of the
+    operations under evaluation.
+
+    \begin{itemize}
+        \item \textbf{Insertion:} the benchmark performs $N$
+        successful insertions of unique keys with associated payloads,
+        together with $(N-1)$ unsuccessful insertion attempts using
+        keys that are already present in the container.
+
+        \item \textbf{Deletion:} the benchmark performs $N$
+        successful deletions of existing keys with associated
+        payloads, together with $(N-1)$ unsuccessful deletion
+        attempts using keys that are absent from the container.
+
+        \item \textbf{Lookup:} the benchmark performs $N$ successful
+        lookups of existing keys and $N$ unsuccessful lookups
+        of absent keys.
+    \end{itemize}
+
+    Where $N$ is sequentially applied for \(\{32, 64, 128, 256\}\) capacity of container.
+
+    Benchmark source code, compilation instructions, and raw
+    measurement results are available at:
+
+    \url{https://github.com/mvoronoy/Art.Trie/tree/main/trie-01_Index_Representation/benchmark}
 
     \bibliographystyle{unsrt} % Or unsrt, alpha, etc.
     \bibliography{trie-01_Index_Representation}
